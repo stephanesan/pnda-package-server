@@ -93,7 +93,7 @@ resources:
         #!/bin/bash 
         cd /tmp/
         echo 'start:' `date -Iseconds` >> ./build.log
-        apt-get update --fix-missing && apt-get install wget apache2
+        apt-get update --fix-missing && apt-get install -y wget apache2
         wget -O build.sh https://raw.githubusercontent.com/pndaproject/pnda-package-server-docker/develop/build.sh
         chmod o+x ./build.sh
         export GITHUB_ENDPOINT=https://github.com/pndaproject
