@@ -13,6 +13,15 @@ parameters:
   server_0_key:
     description: Key to use for accessing the server server_0 
     type: string
+  git_mode:
+    description: BRANCH or TAG
+    type: string
+  build_user:
+    description: User that will build the packages (not root)
+    type: string
+  git_arg:
+    description: BRANCH or TAG name
+    type: string
 resources:
   floatingip_0:
     properties:
@@ -89,17 +98,31 @@ resources:
       security_groups:
       - get_resource: security_group_55
       user_data_format: RAW
-      user_data: |
-        #!/bin/bash 
-        cd /tmp/
-        echo 'start:' `date -Iseconds` >> ./build.log
-        apt-get update --fix-missing && apt-get install -y wget apache2
-        wget -O build.sh https://raw.githubusercontent.com/pndaproject/pnda-package-server-docker/develop/build.sh
-        chmod o+x ./build.sh
-        export GITHUB_ENDPOINT=https://github.com/pndaproject
-        export BRANCH=master
-        ./build.sh
-        echo 'stop:' `date -Iseconds` >> ./build.log
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash 
+            echo 'start:' `date -Iseconds` >> ./build.log
+            sed -i "1s/^/127.0.1.1 `cat /etc/hostname`\n/" /etc/hosts
+            apt-get update --fix-missing && apt-get install -y git apache2
+            sudo -i -H -u ubuntu bash - << 'EOF'
+            cd /tmp/
+            git clone https://github.com/pndaproject/pnda.git
+            cd pnda/build 
+            sudo bash -c 'source /tmp/pnda/build/install-build-tools.sh'
+            source ./set-pnda-env.sh
+            source ./build-pnda.sh %git_mode% %git_arg%
+            EOF
+            mkdir /var/www/html/third-party
+            mv /tmp/pnda/build/jdk*.tar.gz /var/www/html/third-party/
+            cp -r /tmp/pnda/build/pnda-dist /var/www/html/
+            chown -R :www-data /var/www/html/*
+            service apache2 restart
+            echo 'stop:' `date -Iseconds` >> ./build.log
+          params:
+            '%git_mode%': { get_param: git_mode }
+            '%git_arg%': { get_param: git_arg }
+            '%build_user%': { get_param: build_user }
     type: OS::Nova::Server
     depends_on: subnet_1
   subnet_1:
