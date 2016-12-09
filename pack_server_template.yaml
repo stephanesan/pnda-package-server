@@ -91,7 +91,11 @@ resources:
         get_param: server_0_image
       key_name:
         get_param: server_0_key
-      name: sl_disc_node
+      name:
+        str_replace:
+          template: '%stack_name%-server'
+          params:
+            '%stack_name%': {get_param: 'OS::stack_name'}
       networks:
       - network:
           get_resource: network_1
