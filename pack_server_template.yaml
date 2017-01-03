@@ -13,6 +13,9 @@ parameters:
   server_0_key:
     description: Key to use for accessing the server server_0 
     type: string
+  name_servers:
+    description: List of name servers
+    type: string
   git_mode:
     description: BRANCH or TAG
     type: string
@@ -38,13 +41,21 @@ resources:
   network_1:
     properties:
       admin_state_up: true
-      name: sl_disc_subnet
+      name: 
+        str_replace:
+          template: '%stack_name%-net'
+          params:
+            '%stack_name%': {get_param: 'OS::stack_name'}
       shared: false
     type: OS::Neutron::Net
   router_0:
     properties:
       admin_state_up: true
-      name: sl_disc_router
+      name: 
+        str_replace:
+          template: '%stack_name%-router'
+          params:
+            '%stack_name%': {get_param: 'OS::stack_name'}
     type: OS::Neutron::Router
   router_0_gateway:
     properties:
@@ -63,7 +74,11 @@ resources:
   security_group_55:
     properties:
       description: testing out sec groups
-      name: sl_disc_gr
+      name: 
+        str_replace:
+          template: '%stack_name%-gr'
+          params:
+            '%stack_name%': {get_param: 'OS::stack_name'}
       rules:
       - direction: egress
         ethertype: IPv6
@@ -113,6 +128,7 @@ resources:
             cd /tmp/
             git clone https://github.com/pndaproject/pnda.git
             cd pnda/build 
+            git checkout %git_arg%
             sudo bash -c 'source /tmp/pnda/build/install-build-tools.sh'
             source ./set-pnda-env.sh
             source ./build-pnda.sh %git_mode% %git_arg%
@@ -135,12 +151,15 @@ resources:
       - end: 192.168.0.254
         start: 192.168.0.2
       cidr: 192.168.0.0/24
-      dns_nameservers:
-      - 144.254.71.184
+      dns_nameservers: [ { get_param: name_servers } ]
       enable_dhcp: true
       host_routes: []
       ip_version: 4
-      name: sl_disc_subnet
+      name: 
+        str_replace:
+          template: '%stack_name%-subnet'
+          params:
+            '%stack_name%': {get_param: 'OS::stack_name'}
       network_id:
         get_resource: network_1
     type: OS::Neutron::Subnet
