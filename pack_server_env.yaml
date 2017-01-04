@@ -3,7 +3,7 @@ parameters:
   server_0_flavor: "m1.large"
   server_0_key: "sl_disc"
   server_0_image: "trusty-server-cloudimg-amd64"
-  name_servers: "173.38.200.100"
+  name_servers: ["173.38.200.100"]
   build_user: "ubuntu"
   git_mode: "BRANCH"
   git_arg: "develop"

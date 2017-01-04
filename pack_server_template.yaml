@@ -15,7 +15,7 @@ parameters:
     type: string
   name_servers:
     description: List of name servers
-    type: string
+    type: comma_delimited_list
   git_mode:
     description: BRANCH or TAG
     type: string
@@ -151,7 +151,7 @@ resources:
       - end: 192.168.0.254
         start: 192.168.0.2
       cidr: 192.168.0.0/24
-      dns_nameservers: [ { get_param: name_servers } ]
+      dns_nameservers: { get_param: name_servers }
       enable_dhcp: true
       host_routes: []
       ip_version: 4
