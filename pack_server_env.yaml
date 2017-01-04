@@ -5,5 +5,5 @@ parameters:
   server_0_image: "trusty-server-cloudimg-amd64"
   name_servers: ["173.38.200.100"]
   build_user: "ubuntu"
-  git_mode: "BRANCH"
-  git_arg: "develop"
+  git_mode: "RELEASE"
+  git_arg: "release/3.3"
