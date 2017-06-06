@@ -1,9 +1,10 @@
 parameters:
-  external_network_for_floating_ip_0: "corp18"
+  external_network_for_floating_ip_0: "public"
   server_0_flavor: "m1.large"
-  server_0_key: "sl_disc"
+  server_0_key: "sl_key"
   server_0_image: "trusty-server-cloudimg-amd64"
   name_servers: ["173.38.200.100"]
   build_user: "ubuntu"
-  git_mode: "BRANCH"
-  git_arg: "develop"
+  git_mode: "RELEASE"
+  git_arg: "release/3.4"
+  java_mirror: "http://54.216.145.181/mirror_misc/jdk-8u74-linux-x64.tar.gz"

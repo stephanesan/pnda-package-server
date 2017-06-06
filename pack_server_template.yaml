@@ -25,6 +25,9 @@ parameters:
   git_arg:
     description: BRANCH or TAG name
     type: string
+  java_mirror:
+    description: http link to the jdk-8u74-linux-x64.tar.gz
+    type: string 
 resources:
   floatingip_0:
     properties:
@@ -128,8 +131,8 @@ resources:
             cd /tmp/
             git clone https://github.com/pndaproject/pnda.git
             cd pnda/build 
-            git checkout %git_arg%
-            sudo bash -c 'source /tmp/pnda/build/install-build-tools.sh'
+            git checkout release/3.4
+            sudo bash -c 'JAVA_MIRROR=%java_mirror%; source /tmp/pnda/build/install-build-tools.sh'
             source ./set-pnda-env.sh
             source ./build-pnda.sh %git_mode% %git_arg%
             EOF
@@ -143,6 +146,7 @@ resources:
             '%git_mode%': { get_param: git_mode }
             '%git_arg%': { get_param: git_arg }
             '%build_user%': { get_param: build_user }
+            '%java_mirror%': { get_param: java_mirror }
     type: OS::Nova::Server
     depends_on: subnet_1
   subnet_1:
